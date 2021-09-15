@@ -1,56 +1,57 @@
 
 const gameBoard = (() => {
-    //console.log("this i n gameboard ", this)
     let container = document.querySelector("#container")
     let board;
-    let gameBoardArray = [["x","",""],["","o","x"],["","o",""]] //[[["x"],["x"],["x"]],[["o"],["x"],["o"]], [["o"],["o"],["o"]]]
+    let gameBoardArray = [["","",""],["","",""],["","",""]] //[[["x"],["x"],["x"]],[["o"],["x"],["o"]], [["o"],["o"],["o"]]]
     let renderBoard = function() {
-        //console.log("tihs in render ", this)
         let squareDataId = 0
         if(board) board.remove()
         board = document.createElement("div")
         board.id = "board"
         container.appendChild(board)
-        gameBoardArray.forEach((rowEl, i) => {
+        gameBoard.gameBoardArray.forEach((rowEl, i) => {
             let row = document.createElement("div")
             row.classList.add("row")
             board.appendChild(row)
-            rowEl.forEach((squareEl, j) => {
-                //console.log("this in loop", this)
+            rowEl.forEach((squareEl, j) => {                
                 let square = document.createElement("div")
                 square.classList.add("square")
                 row.appendChild(square)
                 square.setAttribute("data-y", i)
                 square.setAttribute("data-x", j)
                 squareDataId++
-                //console.log(gameBoardArray[i][j])
-                square.innerText = gameBoardArray[i][j]
+                square.innerText = gameBoard.gameBoardArray[i][j]
                 square.addEventListener("click", (e) => {
-                   // console.log(e.target)
                     let x = e.target.attributes["data-x"].value
                     let y = e.target.attributes["data-y"].value
-                    makeMark(x, y)
-                    renderBoard()
-                    game.togglePlayerTurn()
-                    //console.log( {game})
-                    //console.log(game.playerTurn)
-                    })
+                    if (!game.gameFinished) {
+                        makeMark(x, y)
+                        renderBoard()
+                        game.checkIfWon()
+                        game.togglePlayerTurn()
+                    }    
+                })
             })
         })
     }
     let makeMark = function(x, y) {
-        if (gameBoardArray[y][x] === "") {
-            gameBoardArray[y][x] = game.playerTurn - 1 ? game.playerTwo.mark : game.playerTwo.mark 
-            console.log(window.playerTwo)
+        if (!game.gameFinished) {
+            if (gameBoard.gameBoardArray[y][x] === "") {
+                gameBoard.gameBoardArray[y][x] = game.playerTurn - 1 ? game.playerTwo.mark : game.playerOne.mark 
+                
+            }
         }
     }
     let clear = function() {
-        gameBoardArray = [["","",""],["","",""],["","",""]]
+        this.gameBoardArray = [["","",""],["","",""],["","",""]]
         renderBoard()
+        game.numberOfMarks = 0
+        game.gameFinished = false;
     }
     return {
         renderBoard,
         clear, 
+        gameBoardArray
     }
 })()
     
@@ -61,6 +62,7 @@ const player = (playernumber, playername = "Player " + playernumber) => {
     let playerNumber = playernumber;
     let mark = playerNumber - 1 ? "O" : "X" 
     let playerName = playername
+ 
     return {
         playerNumber,
         mark,
@@ -68,44 +70,64 @@ const player = (playernumber, playername = "Player " + playernumber) => {
     }
 }
 const game = (() => {
-    //let that = this
-    console.log("this in game: ", this)
+    let gameFinished = false
+    let numberOfMarks = 0
     let playerOne ={};
     let playerTwo={};
-    let createPlayers = function() {
+    const createPlayers = function() {
         console.log("this in create players", this)
         let playerOneNameInput = document.querySelector("#player-one").value
         let playerTwoNameInput = document.querySelector("#player-two").value
         this.playerOne = player(1, playerOneNameInput) 
         this.playerTwo = player(2, playerTwoNameInput) 
     }
-    let a;
 
     let gameStartButton = document.querySelector("#start")
-    gameStartButton.addEventListener("click", e => {
+    gameStartButton.addEventListener("click", (e) => {
         e.preventDefault()
-        a = () => {createPlayers()}
-        a()
+        game.createPlayers() 
         init()
     })
     this.playerTurn = 1;
-    let togglePlayerTurn = function () {
-        console.log("this in palyerturn",this)
+    const togglePlayerTurn = function () {
+        //console.log("this in palyerturn",this)
         this.playerTurn = this.playerTurn != 2 ? 2 : 1
     }
+const checkIfWon = function() {
+    let z = gameBoard.gameBoardArray
+    let conditions = [
+        [z[0][0], z[0][1], z[0][2]],
+        [z[1][0], z[1][1], z[1][2]],
+        [z[2][0], z[2][1], z[2][2]],
+        [z[0][0], z[1][0], z[2][0]],
+        [z[0][1], z[1][1], z[2][1]],
+        [z[0][2], z[1][2], z[2][2]],
+        [z[0][0], z[1][1], z[2][2]],
+        [z[0][2], z[1][1], z[2][0]]
+        ]
+
+    conditions.forEach((conditionSet, i) => {
+        console.log(conditionSet)
+        const allEqual = arr => arr.every(number => number === arr[0])
+        if (allEqual(conditionSet) && conditionSet[0] != "") {
+            console.log(conditionSet[0] + " wins")
+            this.gameFinished = true
+        }
+    })
+}
+
     let init = function(playerOneName, playerTwoName) {
         console.log("this in init", this)
-        gameBoard.renderBoard()
-       
-         
-        //console.log({playerTwo})
-        
+        gameBoard.renderBoard()  
     }
     return {
         togglePlayerTurn,
         playerTurn,
         playerOne,
-        playerTwo
+        playerTwo,
+        createPlayers,
+        checkIfWon, 
+        numberOfMarks
     }
 
 })()
