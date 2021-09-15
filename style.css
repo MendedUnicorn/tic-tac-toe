@@ -6,6 +6,10 @@ body {
     align-items: center;
 }
 
+h1 {
+    margin: 
+}
+
 #container {
     border: 1px solid black;
     display: flex;
@@ -14,6 +18,13 @@ body {
     width: 400px;
 }
 
+#board {
+    border: 1px solid black;
+    display: flex;
+    flex-direction: column;
+    height: 400px;
+    width: 400px;
+}
 .row {
     border: 1px solid red;
     display: flex;
