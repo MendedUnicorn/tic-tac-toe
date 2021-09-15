@@ -27,8 +27,10 @@ const gameBoard = (() => {
                     if (!game.gameFinished) {
                         makeMark(x, y)
                         renderBoard()
-                        game.checkIfWon()
+                        game.checkIfWon() 
                         game.togglePlayerTurn()
+                        displayController.updateDisplay()
+
                     }    
                 })
             })
@@ -47,6 +49,7 @@ const gameBoard = (() => {
         renderBoard()
         game.numberOfMarks = 0
         game.gameFinished = false;
+        game.playerTurn = 1;
     }
     return {
         renderBoard,
@@ -57,7 +60,24 @@ const gameBoard = (() => {
     
 const displayController = (() => {
     
-})
+    
+    let display = document.querySelector("#display")
+    const updateDisplay = function() {
+        console.log("displayt: ", game.winner)
+        if (game.winner) {
+            //console.log("someone won", game.checkIfWon())
+            display.innerText = 
+            (game.winner == 1 ? (game.playerOne.playerName||"Player One") : (game.playerTwo.playerName|| "Player Two")) + " is the Winner"
+        } 
+        console.log("game winner:", game.winner)
+        if(!game.gameFinished) display.innerText = game.playerTurn - 1 ? "Plater Two's Turn" : "Player One's Turn"
+    }
+    return {
+        updateDisplay
+    }
+
+    
+})()
 const player = (playernumber, playername = "Player " + playernumber) => {
     let playerNumber = playernumber;
     let mark = playerNumber - 1 ? "O" : "X" 
@@ -74,8 +94,8 @@ const game = (() => {
     let numberOfMarks = 0
     let playerOne ={};
     let playerTwo={};
+    let winner;
     const createPlayers = function() {
-        console.log("this in create players", this)
         let playerOneNameInput = document.querySelector("#player-one").value
         let playerTwoNameInput = document.querySelector("#player-two").value
         this.playerOne = player(1, playerOneNameInput) 
@@ -107,18 +127,22 @@ const checkIfWon = function() {
         ]
 
     conditions.forEach((conditionSet, i) => {
-        console.log(conditionSet)
         const allEqual = arr => arr.every(number => number === arr[0])
         if (allEqual(conditionSet) && conditionSet[0] != "") {
-            console.log(conditionSet[0] + " wins")
             this.gameFinished = true
+            this.winner =  conditionSet[0] == game.playerOne.mark ? 1 : 2
+            displayController.updateDisplay()
+            
+        } else if (this.numberOfMarks == 9) {
+            gameFinished = true
+            displayController.updateDisplay()
         }
     })
 }
 
     let init = function(playerOneName, playerTwoName) {
-        console.log("this in init", this)
-        gameBoard.renderBoard()  
+        gameBoard.renderBoard() 
+        displayController.updateDisplay() 
     }
     return {
         togglePlayerTurn,

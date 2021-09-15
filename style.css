@@ -38,3 +38,9 @@ h1 {
     line-height: 130px;
     text-align: center;
 }
+
+#display {
+    width: 400px;
+    height: 60px;
+    background-color: red;
+}
