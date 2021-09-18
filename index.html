@@ -9,10 +9,12 @@
 </head>
 <body>
     <h1>Tic Tac Toe</h1>
-    <div id="display"></div>
-    <div id="container"></div>
+    <div id="container">
 
-    <button onclick="gameBoard.clear()">Clear</button>
+        <div id="display"></div>
+    </div>
+
+    <button id="clear" onclick="gameBoard.clear()">Clear</button>
 
     <form action="">
         <label for="player-one">Player One</label>
@@ -21,7 +23,6 @@
         <input type="text" name="player-two" id="player-two">
         <input type="submit" value="start" id="start">
     </form>
-    <button id="btn">BLASTOFF!</button>
 <script src="script.js"></script>
 </body>
 </html>

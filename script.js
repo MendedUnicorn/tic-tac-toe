@@ -57,19 +57,14 @@ const gameBoard = (() => {
         gameBoardArray
     }
 })()
-    
+gameBoard.renderBoard()    
 const displayController = (() => {
-    
-    
     let display = document.querySelector("#display")
     const updateDisplay = function() {
-        console.log("displayt: ", game.winner)
         if (game.winner) {
-            //console.log("someone won", game.checkIfWon())
             display.innerText = 
             (game.winner == 1 ? (game.playerOne.playerName||"Player One") : (game.playerTwo.playerName|| "Player Two")) + " is the Winner"
         } 
-        console.log("game winner:", game.winner)
         if(!game.gameFinished) display.innerText = game.playerTurn - 1 ? "Plater Two's Turn" : "Player One's Turn"
     }
     return {
